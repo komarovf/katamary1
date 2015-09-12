@@ -13,8 +13,8 @@ class User(db.Model):
     _password = db.Column(db.String(100))
 
     @staticmethod
-    def make_valid_login(login):
-        return re.sub('[^a-zA-Z0-9_\.]', '', login)
+    def make_valid_nickname(nickname):
+        return re.sub('[^a-zA-Z0-9_\.]', '', nickname)
 
     @hybrid_property
     def password(self):
