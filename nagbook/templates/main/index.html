@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class= 'well'>
+    <h3>АЛЛОЭ</h3>
+    <br>
+    <a href="{{ url_for('auth.login') }}">Login</a>
+    <a href="{{ url_for('auth.register') }}">Register</a>
+</div>
+{% endblock content %}

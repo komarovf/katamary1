@@ -1,8 +1,8 @@
-from wtforms import Form
+from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, PasswordField, TextAreaField
 from wtforms.validators import Required, Length, Email
 
-from .models import User
+from ..models import User
 
 
 class RegisterForm(Form):
