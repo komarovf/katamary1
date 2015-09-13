@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+<div class= 'well'>
+    <h3>{{ current_user.id }}</h3>
+    <br>
+    {% for survey in surveys %}
+        <div class="jumbotron" style="margin:0px; background-color:#BDD8DA">
+	        <h2>"{{survey.name}}"</h2>
+        </div>
+</div>
+{% endblock page_content %}
