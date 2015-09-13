@@ -1,11 +1,15 @@
 from flask import render_template, url_for, g, session, redirect, flash, request
-
-from flask.ext.login import login_user, logout_user
+from flask.ext.login import login_user, logout_user, current_user
 
 from . import auth
 from .forms import RegisterForm, LoginForm
 from .. import db
 from ..models import User
+
+
+@auth.before_request
+def before_request():
+    g.user = current_user
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -22,7 +26,10 @@ def login():
             session.pop('remember_me', None)
         login_user(user, remember=remember_me)
         flash('Logged in successfully')
-        return redirect(request.args.get('next') or url_for('main.index'))
+        return redirect(
+            request.args.get('next') or
+            url_for('cabinet.index', user_id=user.id)
+        )
     return render_template('auth/login.html', form=form)
 
 

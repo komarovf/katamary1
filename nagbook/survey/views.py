@@ -12,4 +12,4 @@ def before_request():
 def add(user_id):
     if current_user.id != user_id:
         abort(403)
-    return render_template('survey/base.html')
+    return render_template('survey/add.html')
