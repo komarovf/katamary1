@@ -1,8 +1,8 @@
-from flask import Flask, g
+from flask import Flask
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, current_user
+from flask.ext.login import LoginManager
 from flask.ext.mandrill import Mandrill
 
 from config import config
@@ -12,7 +12,6 @@ moment = Moment()
 db = SQLAlchemy()
 mandrill = Mandrill()
 login_manager = LoginManager()
-login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
 

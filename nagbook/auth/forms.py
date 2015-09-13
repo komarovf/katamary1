@@ -1,4 +1,4 @@
-from flask.ext.wtf import Form
+from flask_wtf import Form
 from wtforms import StringField, BooleanField, PasswordField, TextAreaField
 from wtforms.validators import Required, Length, Email
 
@@ -33,7 +33,7 @@ class RegisterForm(Form):
         if not Form.validate(self):
             return False
 
-        if self.nickname.data != User.make_valid_login(self.nickname.data):
+        if self.nickname.data != User.make_valid_nickname(self.nickname.data):
             self.nickname.errors.append(
                 'Please use letters, numbers, dots and underscores only'
             )
