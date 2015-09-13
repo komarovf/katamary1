@@ -4,7 +4,7 @@
   "description": "uwc7 first stage",
   "main": "static/js/src/main.js",
   "scripts": {
-    "build": "browserify -t babelify nagbook/static/js/src/main.js -o nagbook/static/js/dist/bundled.js"
+    "build": "browserify -t reactify nagbook/static/js/src/main.js -o nagbook/static/js/dist/bundled.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/komarovf/katamary1",
   "dependencies": {
-    "babelify": "^6.3.0",
     "browserify": "^11.1.0",
-    "react": "^0.13.3"
+    "react": "^0.13.3",
+    "reactify": "^1.1.1"
   }
 }
