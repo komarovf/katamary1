@@ -1,0 +1,24 @@
+{
+  "name": "nagbook",
+  "version": "1.0.0",
+  "description": "uwc7 first stage",
+  "main": "static/js/src/main.js",
+  "scripts": {
+    "build": "browserify -t babelify nagbook/static/js/src/main.js -o nagbook/static/js/dist/bundled.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/komarovf/katamary1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/komarovf/katamary1/issues"
+  },
+  "homepage": "https://github.com/komarovf/katamary1",
+  "dependencies": {
+    "babelify": "^6.3.0",
+    "browserify": "^11.1.0",
+    "react": "^0.13.3"
+  }
+}

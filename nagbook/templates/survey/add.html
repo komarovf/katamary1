@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+<h1>Add survey page</h1>
+{% endblock page_content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dist/budled.js') }}"></script>
+{% endblock scripts %}

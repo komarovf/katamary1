@@ -7,7 +7,6 @@ from ..models import User
 from .. import mandrill
 
 
-@auth.before_request
 @main.before_request
 def before_request():
     g.user = current_user
