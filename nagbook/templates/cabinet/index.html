@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+<div class= 'well'>
+    <h3>{{ current_user.id }}</h3>
+    <br>
+    <div class="jumbotron" style="margin:0px; background-color:#BDD8DA">
+    {% for survey in surveys %}
+	    <h2>"{{survey.name}}"</h2>
+        <a class="btn btn-warning" href="{{ url_for('cabinet.mails') }}" role="button">Respondents And Status</a>
+    {% endfor %}
+    </div>
+    <a class="btn btn-success btn-lg" href="{{ url_for('survey.add') }}" role="button">Add new Survey!!!</a>
+    <a class="btn btn-info btn-lg" href="{{ url_for('cabinet.statistic') }}" role="button">Look at Statistic!!!</a>
+</div>
+{% endblock page_content %}

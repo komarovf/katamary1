@@ -41,7 +41,7 @@ def create_app(config_name):
     from .survey import survey as survey_blueprint
     app.register_blueprint(survey_blueprint, url_prefix='/survey')
 
-    from .user import user as user_blueprint
-    app.register_blueprint(user_blueprint, url_prefix='/user')
+    from .cabinet import cabinet as cabinet_blueprint
+    app.register_blueprint(cabinet_blueprint, url_prefix='/cabinet')
 
     return app
