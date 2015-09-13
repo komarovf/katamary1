@@ -1,9 +1,15 @@
 import re
 
-from . import db
-
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from . import db
+from . import login_manager as lm
+
+
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class User(db.Model):

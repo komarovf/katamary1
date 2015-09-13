@@ -1,7 +1,5 @@
 {% extends "bootstrap/base.html" %}
 
-
-
 {% block navbar %}
 <div class="container">
     <nav class="navbar navbar-inverse">
@@ -17,8 +15,7 @@
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
           <ul class="nav navbar-nav navbar-right">
-{#
-          {% if not g.user.is_authenticated() %}
+          {% if not g.user.is_authenticated %}
 
             <li {% if request.path == '/login' %}class="active"{% endif %}><a href="{{ url_for('auth.login') }}">Login</a></li>
             <li {% if request.path == '/register' %}class="active"{% endif %}><a href="{{ url_for('auth.register') }}">Register</a></li>
@@ -26,7 +23,6 @@
           {% else %}
             <li><a href="{{ url_for('auth.logout') }}">Logout ({{ g.user }})</a></li>
           {% endif %}
-        #}
           </ul>
 
         </div>
@@ -35,10 +31,9 @@
 </div>
 {% endblock navbar %}
 
-    {% include 'flash.html' %}
-
     {% block content %}
     <div class="container">
+        {% include 'flash.html' %}
         {% block page_content %}{% endblock page_content %}
     </div>
     {% endblock content %}
