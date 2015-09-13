@@ -1,4 +1,4 @@
-from flask import render_template, url_for, g, session, redirect, flash
+from flask import render_template, url_for, g, session, redirect, flash, request
 
 from flask.ext.login import login_user, logout_user
 
@@ -45,4 +45,4 @@ def register():
 @auth.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))

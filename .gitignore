@@ -8,6 +8,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 .idea
+node_modules/
 flask/
 env/
 build/
