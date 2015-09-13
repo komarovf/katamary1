@@ -1,8 +1,11 @@
-from flask import render_template, abort
+from flask import render_template, abort, g
 from flask.ext.login import login_required, current_user
 from . import cabinet
 from ..models import Survey
 
+@cabinet.before_request
+def before_request():
+    g.user = current_user
 
 @cabinet.route('/<int:user_id>')
 @login_required
@@ -10,7 +13,7 @@ def index(user_id):
     if current_user.id != user_id:
         abort(403)
     surveys = Survey.query.filter(Survey.user_id == current_user.id).all() or []
-    return render_template('index.html', surveys=surveys, current_user=current_user)
+    return render_template('cabinet/index.html', surveys=surveys, current_user=current_user)
 
 @cabinet.route('/distribution/<int:id>')
 @login_required

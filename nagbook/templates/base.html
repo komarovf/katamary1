@@ -21,6 +21,7 @@
             <li {% if request.path == '/register' %}class="active"{% endif %}><a href="{{ url_for('auth.register') }}">Register</a></li>
 
           {% else %}
+            <li><a href="{{ url_for('cabinet.index', user_id = g.user.id) }}">Cabinet ({{ g.user }})</a></li>
             <li><a href="{{ url_for('auth.logout') }}">Logout ({{ g.user }})</a></li>
           {% endif %}
           </ul>

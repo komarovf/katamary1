@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask.ext.login import UserMixin
 
 from . import db
 from . import login_manager as lm
@@ -13,7 +14,7 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer(), primary_key=True)
     nickname = db.Column(db.String(80), unique=True)
