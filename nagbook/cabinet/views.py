@@ -20,6 +20,8 @@ def index(user_id):
 def distribution(id):
     if current_user.id != Survey.query.filter(Survey.id == id).first().user_id:
         abort(403)
+    respondents = {}
+    return render_template('cabinet/distribution.html', respondents=respondents)
 
 @cabinet.route('/statistic/<int:user_id>')
 @login_required

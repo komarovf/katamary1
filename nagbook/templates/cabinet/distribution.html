@@ -3,5 +3,12 @@
 {% block page_content %}
 <div class= 'well'>
     <h3>{{ current_user.id }}</h3>
+    <div class="jumbotron" style="margin:0px; background-color:#BDD8DA">
+    <h3>YOUR emails!!!</h3>
+    {% for respondent in respondents %}
+	    <h2>"{{respondent.email}}"</h2>
+        <h2>"{{respondent.sent_status}}"</h2>
+    {% endfor %}
+    </div>
 </div>
 {% endblock page_content %}

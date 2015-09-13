@@ -98,7 +98,8 @@ class Respondent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), nullable=False)
     survey_id = db.Column(db.Integer, db.ForeignKey('survey.id'), nullable=False)
-    sent_status = db.Column(db.Boolean())
+    email_hash = db.Column(db.String(250), nullable=False)
+    sent_status = db.Column(db.Boolean(), default=False)
 
     def __repr__(self):
         return '<respondent %r>' % self.email
