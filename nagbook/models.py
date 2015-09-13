@@ -50,7 +50,7 @@ class User(db.Model):
 class Survey(db.Model):
     __tablename__ = 'survey'
     id = db.Column(db.Integer, primary_key=True)
-    survey_name = db.Column(db.String(128), index=True)
+    name = db.Column(db.String(128), index=True)
     intro_text = db.Column(db.String(999), index=True)
     start_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     end_time = db.Column(db.DateTime, index=True)
