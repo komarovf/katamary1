@@ -8,7 +8,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     DATABASE_QUERY_TIMEOUT = 0.5
-
+    MANDRILL_API_KEY = 'bZlbuCKuVBI4dsmFPkI7Ng'
     @staticmethod
     def init_app(app):
         pass
