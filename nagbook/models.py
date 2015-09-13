@@ -1,10 +1,16 @@
 import re
 from datetime import datetime, timedelta
 
-from . import db
-
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from . import db
+from . import login_manager as lm
+
+
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class User(db.Model):
@@ -84,6 +90,7 @@ class Answer(db.Model):
 
     def __repr__(self):
         return '<answer %r for question %r>' % self.answer, self.question_id
+
 
 class Respondent(db.Model):
     __tablename__ = 'respondent'
