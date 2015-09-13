@@ -4,7 +4,7 @@ from wtforms.validators import Required, Length, Email
 from ..models import Survey
 
 
-class EmailAddForm(Form, id):
+class EmailAddForm(Form):
     email = StringField('Email', validators=[Required(), Length(1, 64),Email()])
     submit = SubmitField('Add')
 

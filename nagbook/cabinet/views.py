@@ -6,7 +6,7 @@ from ..models import Survey
 
 @cabinet.route('/<int:user_id>')
 @login_required
-def cabinet(user_id):
+def index(user_id):
     if current_user.id != user_id:
         abort(403)
     surveys = Survey.query.filter(Survey.user_id == current_user.id).all() or []
