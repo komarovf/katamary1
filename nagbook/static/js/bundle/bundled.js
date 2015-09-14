@@ -63,7 +63,8 @@ var Survey = React.createClass({displayName: "Survey",
                 success: function(data) {
                     try {
                         if (data.status == "ok") {
-                            console.log("redirect here");
+                            // Redirect to cabinet page!
+                            window.location.href = window.location.pathname.replace("survey", "cabinet");
                         };
                     } catch (e) {
                         alert("Что-то пошло нетак! Попробуйте еще раз.");
