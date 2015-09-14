@@ -1,7 +1,7 @@
 from flask import render_template, abort, g
 from flask.ext.login import login_required, current_user
 from . import cabinet
-from ..models import Survey
+from ..models import Survey, Respondent
 
 
 @cabinet.before_request
@@ -27,11 +27,9 @@ def index(user_id):
 def distribution(id):
     if current_user.id != Survey.query.filter(Survey.id == id).first().user_id:
         abort(403)
-    respondents = {}
-    return render_template(
-        'cabinet/distribution.html',
-        respondents=respondents
-    )
+    respondents = Respondent.query.filter(Respondent.survey_id == id).all()
+    print respondents
+    return render_template('cabinet/distribution.html', respondents=respondents)
 
 
 @cabinet.route('/statistic/<int:user_id>')
