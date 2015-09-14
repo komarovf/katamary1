@@ -15,12 +15,55 @@ var Survey = React.createClass({displayName: "Survey",
     getInitialState: function() {
         return {
             questions: [],
+            emails: ["123"],
+            errors: {},
             selectCountClass: ""
         };
     },
 
+    validateSurvey: function(data) {
+        var errors = {};
+        for (var field in data) {
+            if (!data[field].length) {
+                if (field == "questions") {
+                    errors[field] = "Добавьте минимум 1 вопрос!";
+                } else {
+                    errors[field] = "Нужно заполнить это поле!";
+                };
+            }
+        };
+
+        this.setState({
+            errors: errors
+        });
+
+        if (Object.keys(errors).length === 0) {
+            return true;
+        };
+        return false;
+    },
+
     createSurvey: function(e) {
         e.preventDefault();
+        var survey = [{
+            "name": $('#name').val(),
+            "intro_text": $('#intro_text').val(),
+            "start_time": $('#start_time').val(),
+            "end_time": $('#end_time').val(),
+            "questions": this.state.questions,
+            "emails": this.state.emails
+        }];
+        if (this.validateSurvey(survey[0])) {
+            $.ajax({
+                type: "POST",
+                url: window.location.pathname,
+                data: JSON.stringify({ data: survey }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data) {console.log(data);},
+                error: function(jqXHR, textStatus, errorThrown) {console.log(textStatus);}
+            });
+        };
     },
 
     handleTypeSelect: function(e) {
@@ -33,6 +76,22 @@ var Survey = React.createClass({displayName: "Survey",
                 selectCountClass: ""
             });
         };
+    },
+
+    handleAnswerSave: function(qBody, answers, id) {
+        q = this.state.questions[id];
+        q.body = qBody;
+        q.answers = answers;
+        this.setState({
+            questions: this.state.questions
+        });
+    },
+
+    handleAnswerDel: function(id) {
+        delete this.state.questions[id];
+        this.setState({
+            questions: this.state.questions
+        });
     },
 
     handleAddQuestion: function(e) {
@@ -61,27 +120,41 @@ var Survey = React.createClass({displayName: "Survey",
                 React.createElement("option", {key: "type"+index, value: index}, type)
             );
         });
-        var selectCount = this.props.aCount.map(function(c, index) {
+        var selectCount = this.props.aCount.map(function(c) {
             return (
-                React.createElement("option", {key: "count"+index, value: index}, c)
+                React.createElement("option", {key: "count"+c, value: c}, c)
             );
         });
         return (
             React.createElement("form", {ref: "survey_form"}, 
                 React.createElement("hr", null), 
                 React.createElement("label", {htmlFor: "name"}, "Название опроса "), 
-                React.createElement("input", {type: "text", id: "name"}), 
+                React.createElement("input", {type: "text", id: "name", ref: "name"}), 
+                React.createElement("span", null, this.state.errors.name || ""), 
                 React.createElement("br", null), 
                 React.createElement("label", {htmlFor: "intro_text"}, "Описание опроса "), 
-                React.createElement("textarea", {id: "intro_text"}), 
+                React.createElement("textarea", {id: "intro_text", ref: "intro_text"}), 
+                React.createElement("span", null, this.state.errors.intro_text || ""), 
                 React.createElement("br", null), 
                 React.createElement("label", {htmlFor: "start_time"}, "Дата начала опроса "), 
-                React.createElement("input", {type: "date", id: "start_time"}), 
+                React.createElement("input", {
+                    type: "date", 
+                    id: "start_time", 
+                    ref: "start_time", 
+                    defaultValue: moment().format('YYYY-MM-DD')}
+                ), 
+                React.createElement("span", null, this.state.errors.start_time || ""), 
                 React.createElement("br", null), 
                 React.createElement("label", {htmlFor: "end_time"}, "Дата завершения опроса "), 
-                React.createElement("input", {type: "date", id: "end_time"}), 
+                React.createElement("input", {
+                    type: "date", 
+                    id: "end_time", 
+                    ref: "end_time", 
+                    defaultValue: moment().format('YYYY-MM-DD')}
+                ), 
+                React.createElement("span", null, this.state.errors.end_time || ""), 
                 React.createElement("br", null), 
-                React.createElement("span", null, "Лимит вопросов: ", this.props.maxCount - this.state.questions.length), 
+                React.createElement("span", null, "Можно добавить еще ", this.props.maxCount - this.state.questions.length, " вопросов."), 
                 React.createElement("hr", null), 
                 React.createElement("div", null, 
                     React.createElement("label", {htmlFor: "q_type"}, "Тип вопроса"), 
@@ -97,7 +170,7 @@ var Survey = React.createClass({displayName: "Survey",
                 React.createElement("div", {className: this.state.selectCountClass}, 
                     React.createElement("label", {htmlFor: "a_count"}, "Количество ответов"), 
                     React.createElement("select", {
-                        defaultValue: this.props.aCount[0], 
+                        defaultValue: this.props.aCount[1], 
                         ref: "a_count", 
                         id: "a_count"
                     }, 
@@ -107,8 +180,16 @@ var Survey = React.createClass({displayName: "Survey",
                 React.createElement("button", {onClick: this.handleAddQuestion}, 
                     "Добавить вопрос"
                 ), 
+                React.createElement("span", null, this.state.errors.questions || ""), 
                 React.createElement("hr", null), 
-                React.createElement(QuestionList, {questions: this.state.questions}), 
+                React.createElement(QuestionList, {
+                    questions: this.state.questions, 
+                    saveAnswer: this.handleAnswerSave, 
+                    delAnswer: this.handleAnswerDel}
+                ), 
+                React.createElement("button", null, "Добавить емайлы для рассылки"), 
+                React.createElement("span", null, this.state.errors.emails || ""), 
+                React.createElement("hr", null), 
                 React.createElement("button", {onClick: this.createSurvey}, "Сохранить опрос")
             )
         );
@@ -118,10 +199,17 @@ var Survey = React.createClass({displayName: "Survey",
 
 var QuestionList = React.createClass({displayName: "QuestionList",
     render: function() {
+        var self = this;
         var questions = this.props.questions.map(function(q, index) {
             return (
                 React.createElement("li", {key: "question"+index}, 
-                    React.createElement(Question, {data: q, id: index})
+                    React.createElement(Question, {
+                        data: q, 
+                        questionTypes: questionTypes, 
+                        id: index, 
+                        onAnswerSave: self.props.saveAnswer, 
+                        onAnswerDel: self.props.delAnswer}
+                    )
                 )
             );
         });
@@ -164,9 +252,10 @@ var Question = React.createClass({displayName: "Question",
     },
 
     displayQuestion: function() {
+        var qType = this.props.questionTypes[this.props.data.type];
         var value = this.props.data.body || "";
         var nodes = [
-            React.createElement("label", {htmlFor: "question"}, "Вопрос: "),
+            React.createElement("label", {htmlFor: "question"}, "Вопрос: (", qType, ")"),
             React.createElement("input", {type: "text", id: "question", ref: "ans", defaultValue: value})
         ];
         if (this.state.errors["ans"]) {
@@ -183,7 +272,7 @@ var Question = React.createClass({displayName: "Question",
         } else {
             return (
                 React.createElement("div", null, 
-                    React.createElement("p", null, "Вопрос: "), 
+                    React.createElement("p", null, "Вопрос: (", qType, ")"), 
                     React.createElement("p", null, value)
                 )
             );
@@ -193,15 +282,45 @@ var Question = React.createClass({displayName: "Question",
     handleSaveClick: function(e) {
         e.preventDefault();
         var errors = {};
+        var answers = [];
+        var qBody = "";
 
         // validation here!
         for (var ref in this.refs) {
             if (this.refs[ref].getDOMNode().value == "") {
                 errors[ref] = "Нужно заполнить это поле!";
+            } else {
+                if (ref == "ans") {
+                    qBody = this.refs[ref].getDOMNode().value;
+                } else {
+                    answers.push(this.refs[ref].getDOMNode().value);
+                };
             };
         };
+
+        if (Object.keys(errors).length === 0) {
+            // save question
+            this.props.onAnswerSave(qBody, answers, this.props.id);
+            this.setState({
+                edit: false
+            });
+        }
+
         this.setState({
             errors: errors
+        });
+    },
+
+    handleDelClick: function(e) {
+        e.preventDefault();
+        // Delete question
+        this.props.onAnswerDel(this.props.id);
+    },
+
+    handleEditClick: function(e) {
+        e.preventDefault();
+        this.setState({
+            edit: true
         });
     },
 
@@ -236,8 +355,12 @@ var Question = React.createClass({displayName: "Question",
         } else {
             btn = (
                 React.createElement("div", null, 
-                    React.createElement("button", null, "Удалить вопрос"), 
-                    React.createElement("button", null, "Редактировать вопрос")
+                    React.createElement("button", {onClick: this.handleDelClick}, 
+                        "Удалить вопрос"
+                    ), 
+                    React.createElement("button", {onClick: this.handleEditClick}, 
+                        "Редактировать вопрос"
+                    )
                 )
             );
         };

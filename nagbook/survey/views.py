@@ -1,4 +1,4 @@
-from flask import render_template, abort, g, request
+from flask import render_template, abort, g, request, jsonify
 from flask.ext.login import login_required, current_user
 from . import survey
 from ..models import Survey
@@ -23,4 +23,4 @@ def add(user_id):
     if current_user.id != user_id:
         abort(403)
     print request.json
-    return 0
+    return jsonify({"status": "ok"})
