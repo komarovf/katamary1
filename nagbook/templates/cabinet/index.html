@@ -8,10 +8,10 @@
     <h3>YOUR SURVEYS!!!</h3>
     {% for survey in surveys %}
 	    <h2>"{{survey.name}}"</h2>
-        <a class="btn btn-warning" href="{{ url_for('.distribution') }}" role="button">Respondents And Status</a>
+        <a class="btn btn-warning" href="{{ url_for('.distribution', id=survey.id) }}" role="button">Respondents And Status</a>
     {% endfor %}
     </div>
-    <a class="btn btn-success btn-lg" href="{{ url_for('survey.show_add_form', user_id = current_user.id) }}" role="button">Add new Survey!!!</a>
-    <a class="btn btn-info btn-lg" href="{{ url_for('.statistic', user_id = current_user.id) }}" role="button">Look at Statistic!!!</a>
+    <a class="btn btn-success btn-lg" href="{{ url_for('survey.show_add_form', user_id=current_user.id) }}" role="button">Add new Survey!!!</a>
+    <a class="btn btn-info btn-lg" href="{{ url_for('.statistic', user_id=current_user.id) }}" role="button">Look at Statistic!!!</a>
 </div>
 {% endblock page_content %}
