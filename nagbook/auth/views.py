@@ -28,7 +28,7 @@ def login():
         flash('Logged in successfully')
         return redirect(
             request.args.get('next') or
-            url_for('cabinet.index', user_id=user.id)
+            url_for('admin.index') if user.role == 'admin' else url_for('cabinet.index', user_id=user.id)
         )
     return render_template('auth/login.html', form=form)
 

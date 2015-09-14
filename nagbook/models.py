@@ -20,6 +20,7 @@ class User(db.Model, UserMixin):
     nickname = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
     _password = db.Column(db.String(100))
+    role = db.Column(db.String(20), default='user')
 
     @staticmethod
     def make_valid_nickname(nickname):
@@ -37,18 +38,6 @@ class User(db.Model, UserMixin):
         if check_password_hash(self._password, plaintext):
             return True
         return False
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return self.id
 
     def __repr__(self):
         return str(self.nickname)
