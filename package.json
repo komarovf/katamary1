@@ -4,7 +4,7 @@
   "description": "uwc7 first stage",
   "main": "static/js/src/main.js",
   "scripts": {
-    "build": "browserify -t reactify nagbook/static/js/src/main.js -o nagbook/static/js/dist/bundled.js"
+    "build": "browserify -t reactify nagbook/static/js/src/main.js -o nagbook/static/js/bundle/bundled.js"
   },
   "repository": {
     "type": "git",
