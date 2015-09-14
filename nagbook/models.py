@@ -75,6 +75,7 @@ class Question(db.Model):
     survey_id = db.Column(db.Integer, db.ForeignKey('survey.id'), nullable=False)
     type = db.Column(db.String(25))
     consecutive_number = db.Column(db.Integer)
+    body = db.Column(db.String(999), index=True)
     q_object = db.Column(db.PickleType())
 
     def __repr__(self):
