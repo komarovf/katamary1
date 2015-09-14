@@ -2,7 +2,7 @@ from flask import render_template, abort, g, request, jsonify
 from flask.ext.login import login_required, current_user
 from datetime import datetime
 from . import survey
-from .. import db
+from .. import db, mandrill
 from ..models import Survey, Question, Respondent
 
 
@@ -51,4 +51,10 @@ def add(user_id):
             email_hash=respondent_json,
         )
         db.session.add(respondent)
+        #mandrill.send_email(
+        #    from_email='komarovf88@gmail.com',
+        #    to=[{'email': respondent_json}],
+        #    text='1337'
+        #)
+
     return jsonify({"status": "ok"})
