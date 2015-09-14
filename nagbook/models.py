@@ -66,7 +66,7 @@ class Survey(db.Model):
     respondents_emails = db.relationship('Respondent', lazy="dynamic", backref='survey')
 
     def __repr__(self):
-        return '<survey_name %r>' % self.survey_name
+        return '<survey_id %r>' % self.id
 
 
 class Question(db.Model):
