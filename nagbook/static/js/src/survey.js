@@ -1,5 +1,5 @@
 var React = require("react");
-
+var AnswerForm = require("./answer_form.js");
 
 var questionTypes = [
     "one_answer",
@@ -188,19 +188,19 @@ var Survey = React.createClass({
                 <span>{this.state.errors.intro_text || ""}</span>
                 <br />
                 <label htmlFor="start_time">Дата начала опроса </label>
-                <input 
-                    type="date" 
-                    id="start_time" 
-                    ref="start_time" 
+                <input
+                    type="date"
+                    id="start_time"
+                    ref="start_time"
                     defaultValue={moment().format('YYYY-MM-DD')}
                 />
                 <span>{this.state.errors.start_time || ""}</span>
                 <br />
                 <label htmlFor="end_time">Дата завершения опроса </label>
-                <input 
-                    type="date" 
-                    id="end_time" 
-                    ref="end_time" 
+                <input
+                    type="date"
+                    id="end_time"
+                    ref="end_time"
                     defaultValue={moment().format('YYYY-MM-DD')}
                 />
                 <span>{this.state.errors.end_time || ""}</span>
@@ -233,7 +233,7 @@ var Survey = React.createClass({
                 </button>
                 <span>{this.state.errors.questions || ""}</span>
                 <hr />
-                <QuestionList 
+                <QuestionList
                     questions={this.state.questions}
                     saveQuestion={this.handleQuestionSave}
                     delQuestion={this.handleQuestionDel}
@@ -436,11 +436,23 @@ var Question = React.createClass({
 });
 
 
-React.render(
-    <Survey
-        types={questionTypes}
-        aCount={answersNumber}
-        maxCount={maxQuestionsCount}
-    />,
-    document.getElementById("survey_add")
-);
+var node_add = document.getElementById("survey_add");
+if (node_add) {
+    React.render(
+        <Survey
+            types={questionTypes}
+            aCount={answersNumber}
+            maxCount={maxQuestionsCount}
+        />,
+        node_add
+    );
+};
+
+
+var node_ans = document.getElementById("answer_survey");
+if (node_ans) {
+    React.render(
+        <AnswerForm source={$(node_ans).data('url')} />,
+        node_ans
+    );
+};

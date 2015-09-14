@@ -33,7 +33,7 @@ def add(user_id):
         user_id=current_user.id
     )
     db.session.add(survey)
-    db.session.commit()
+    db.session.flush()
     for i, question_json in enumerate(data['questions']):
         question = Question(
             body=question_json['body'],
@@ -50,10 +50,46 @@ def add(user_id):
             email_hash=respondent_json,
         )
         db.session.add(respondent)
-        #mandrill.send_email(
+
+        # mandrill.send_email(
         #    from_email='komarovf88@gmail.com',
         #    to=[{'email': respondent_json}],
         #    text='1337'
-        #)
+        # )
 
+    db.session.commit()
     return jsonify({"status": "ok"})
+
+
+@survey.route('/answer/<hash>', methods=['GET', 'POST'])
+def answer_view(hash):
+    # survey_id, email_hash = hash.split('_')
+    # check hash in survey_hashes here
+    survey_id = 1
+
+    if request.method == 'POST':
+        # Save Answers here
+        pass
+
+    return render_template('survey/answer_form.html', survey_id=survey_id)
+
+
+@survey.route('/get/<int:survey_id>', methods=['GET'])
+def get_survey(survey_id):
+    result = {}
+    survey = Survey.query.get(survey_id)
+    result["name"] = survey.name
+    result["intro_text"] = survey.intro_text
+    result["start_time"] = survey.start_time
+    result["end_time"] = survey.end_time
+    result["questions"] = (
+        list(map(
+            lambda x: dict(
+                body=x.body,
+                type=x.type,
+                answers=x.q_object
+            ),
+            survey.questions.all()
+        ))
+    )
+    return jsonify(survey=result)
