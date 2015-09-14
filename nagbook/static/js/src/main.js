@@ -14,7 +14,7 @@ var Survey = React.createClass({
     getInitialState: function() {
         return {
             questions: [],
-            emails: ["123"],
+            emails: [],
             errors: {},
             selectCountClass: ""
         };
@@ -59,8 +59,18 @@ var Survey = React.createClass({
                 data: JSON.stringify({ data: survey }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(data) {console.log(data);},
-                error: function(jqXHR, textStatus, errorThrown) {console.log(textStatus);}
+                success: function(data) {
+                    try {
+                        if (data.status == "ok") {
+                            console.log("redirect here");
+                        };
+                    } catch (e) {
+                        alert("Что-то пошло нетак! Попробуйте еще раз.");
+                    };
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
             });
         };
     },
@@ -77,7 +87,7 @@ var Survey = React.createClass({
         };
     },
 
-    handleAnswerSave: function(qBody, answers, id) {
+    handleQuestionSave: function(qBody, answers, id) {
         q = this.state.questions[id];
         q.body = qBody;
         q.answers = answers;
@@ -86,8 +96,8 @@ var Survey = React.createClass({
         });
     },
 
-    handleAnswerDel: function(id) {
-        delete this.state.questions[id];
+    handleQuestionDel: function(id) {
+        this.state.questions.splice(id, 1);
         this.setState({
             questions: this.state.questions
         });
@@ -113,7 +123,39 @@ var Survey = React.createClass({
         }
     },
 
+    emailValidate: function(email) {
+        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        return re.test(email);
+    },
+
+    handleEmailAdd: function(e) {
+        e.preventDefault();
+        var email = this.refs.email_input.getDOMNode().value;
+        var emails = this.state.emails;
+        var errors = {};
+
+        if (this.emailValidate(email) && (emails.indexOf(email) === -1)) {
+            emails.push(email);
+        } else {
+            errors.email_input = "Неверный Email (Возможно такой Email уже есть в списке)!";
+        };
+        this.setState({
+            emails: emails,
+            errors: errors
+        });
+    },
+
+    handleEmailDel: function(email, e) {
+        e.preventDefault();
+        var emails = this.state.emails;
+        emails.splice(emails.indexOf(email), 1);
+        this.setState({
+            emails: emails
+        });
+    },
+
     render: function() {
+        var self = this;
         var selectTypeOptions = this.props.types.map(function(type, index) {
             return (
                 <option key={"type"+index} value={index}>{type}</option>
@@ -124,6 +166,15 @@ var Survey = React.createClass({
                 <option key={"count"+c} value={c}>{c}</option>
             );
         });
+        var emails = this.state.emails.map(function(email, index) {
+            return (
+                <li key={"email"+index}>
+                    <span>{email}</span>
+                    <button onClick={self.handleEmailDel.bind(null, email)}>Удалить</button>
+                </li>
+            );
+        });
+
         return (
             <form ref="survey_form">
                 <hr />
@@ -183,10 +234,18 @@ var Survey = React.createClass({
                 <hr />
                 <QuestionList 
                     questions={this.state.questions}
-                    saveAnswer={this.handleAnswerSave}
-                    delAnswer={this.handleAnswerDel}
+                    saveQuestion={this.handleQuestionSave}
+                    delQuestion={this.handleQuestionDel}
                 />
-                <button>Добавить емайлы для рассылки</button>
+                <ol>
+                    {emails}
+                </ol>
+                <input type="text" id="email_input" ref="email_input" />
+                <span>{this.state.errors.email_input || ""}</span>
+                <br />
+                <button onClick={this.handleEmailAdd}>
+                    Добавить Email для рассылки
+                </button>
                 <span>{this.state.errors.emails || ""}</span>
                 <hr />
                 <button onClick={this.createSurvey}>Сохранить опрос</button>
@@ -206,8 +265,8 @@ var QuestionList = React.createClass({
                         data={q}
                         questionTypes={questionTypes}
                         id={index}
-                        onAnswerSave={self.props.saveAnswer}
-                        onAnswerDel={self.props.delAnswer}
+                        onQuestionSave={self.props.saveQuestion}
+                        onQuestionDel={self.props.delQuestion}
                     />
                 </li>
             );
@@ -299,7 +358,7 @@ var Question = React.createClass({
 
         if (Object.keys(errors).length === 0) {
             // save question
-            this.props.onAnswerSave(qBody, answers, this.props.id);
+            this.props.onQuestionSave(qBody, answers, this.props.id);
             this.setState({
                 edit: false
             });
@@ -313,7 +372,7 @@ var Question = React.createClass({
     handleDelClick: function(e) {
         e.preventDefault();
         // Delete question
-        this.props.onAnswerDel(this.props.id);
+        this.props.onQuestionDel(this.props.id);
     },
 
     handleEditClick: function(e) {
