@@ -24,17 +24,17 @@ def show_add_form(user_id):
 def add(user_id):
     if current_user.id != user_id:
         abort(403)
+    data = request.json['data'][0]
     survey = Survey(
-        name=request.json['data'][0]['name'],
-        intro_text=request.json['data'][0]['intro_text'],
-        start_time=datetime.strptime(request.json['data'][0]['start_time'], '%Y-%m-%d'),
-        end_time=datetime.strptime(request.json['data'][0]['end_time'], '%Y-%m-%d'),
+        name=data['name'],
+        intro_text=data['intro_text'],
+        start_time=datetime.strptime(data['start_time'], '%Y-%m-%d'),
+        end_time=datetime.strptime(data['end_time'], '%Y-%m-%d'),
         user_id=current_user.id
     )
     db.session.add(survey)
     db.session.commit()
-    for question_json in request.json['data'][0]['questions']:
-        i=0
+    for i, question_json in enumerate(data['questions']):
         question = Question(
             body=question_json['body'],
             type=question_json['type'],
@@ -42,9 +42,8 @@ def add(user_id):
             consecutive_number=i,
             q_object=question_json['answers'],
         )
-        ++i
         db.session.add(question)
-    for respondent_json in request.json['data'][0]['emails']:
+    for respondent_json in data['emails']:
         respondent = Respondent(
             email=respondent_json,
             survey_id=survey.id,
