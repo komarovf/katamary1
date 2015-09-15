@@ -1,12 +1,13 @@
 from hashlib import md5
 from datetime import datetime
 
-from flask import render_template, abort, g, request, jsonify
+from flask import render_template, abort, g, request, jsonify, url_for
 from flask.ext.login import login_required, current_user
 
 from . import survey
 from .. import db, mandrill
 from ..models import Survey, Question, Respondent, Answer
+from ..decorators import async_email_send
 
 
 @survey.before_request
@@ -53,13 +54,30 @@ def add(user_id):
             email_hash=respondent_json,
         )
         db.session.add(respondent)
-        hash = str(survey.id) + "_" + md5(respondent_json).hexdigest()
 
-        # mandrill.send_email(
-        #    from_email='komarovf88@gmail.com',
-        #    to=[{'email': respondent_json}],
-        #    text='1337'
-        # )
+        hash = str(survey.id) + "_" + md5(respondent_json).hexdigest()
+        url = url_for('survey.add_answer', hash=hash, _external=True)
+        email_text = """
+        <html>
+            <head></head>
+            <body>
+                <h1>You invited for survey: {0}</h1>
+                <a href="{1}">Go to survey page!</a>
+            </body>
+        </html>
+        """.format(survey.name, url)
+        print email_text
+
+        # Non blocking emails send
+        mandrill.send_email = async_email_send(mandrill.send_email)
+        mandrill.send_email(
+            html=email_text,
+            text=url,
+            subject="Survey invitation!",
+            from_email='noreply@survey.com',
+            to=[{'email': respondent_json}],
+            async=True
+        )
 
     db.session.commit()
     return jsonify({"status": "ok"})
@@ -67,7 +85,11 @@ def add(user_id):
 
 @survey.route('/answer/<hash>', methods=['GET', 'POST'])
 def add_answer(hash):
-    survey_id, email_hash = hash.split('_')
+    if "_" in hash:
+        survey_id, email_hash = hash.split('_')
+    else:
+        abort(404)
+
     survey_id = int(survey_id)
 
     hashes = map(
