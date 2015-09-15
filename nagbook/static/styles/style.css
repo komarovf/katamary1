@@ -1,0 +1,119 @@
+.main-block,
+.form-block,
+.personal-block {
+    border: 1px solid #000;
+    border-radius: 4px;
+}
+
+.form-button,
+.blue-button,
+.survey-status {
+    -webkit-transition: all 0.1s;
+    -moz-transition: all 0.1s;
+    -ms-transition: all 0.1s;
+    -o-transition: all 0.1s;
+    transition: all 0.1s;
+}
+
+.blue-button {
+    background: #fff;
+    border-color: #337ab7;
+    color: #337ab7;
+}
+
+.blue-button:hover {
+    background-color: #337ab7;
+    color: #fff;
+}
+
+.main-block {
+    padding: 40px 0 60px 0;
+}
+
+.main-block h2 {
+    margin-bottom: 40px;
+}
+
+.light-text {
+    font-weight: 300;
+}
+
+.register-button {
+    clear: left;
+    font-size: 25px;
+    padding: 15px 0;
+    width: 200px;
+    font-weight: 200;
+}
+
+.form-block legend,
+.personal-block .heading {
+    padding: 10px 0 0 20px;
+    margin: 0 auto 30px auto;
+    width: 99%;
+    font-size: 25px;
+}
+
+.personal-block .heading {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.personal-block .jumbotron {
+    margin: 0 auto 10px auto;
+    width: 99%;
+    overflow: scroll;
+    padding: 10px;
+    max-height: 800px;
+}
+
+.personal-block .survey-entry {
+    padding: 5px 0 5px 10px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.personal-block .your-surveys {
+    margin-bottom: 10px;
+}
+
+.personal-block .survey-name {
+    font-size: 22px;
+    line-height: 32px;
+    float: left;
+    margin: 0 20px 0 0;
+    min-width: 300px;
+    font-weight: 400;
+}
+
+.personal-block .button-container {
+    width: 99%;
+    margin: 20px auto 20px auto;
+}
+
+.form-block .form-group {
+    margin-bottom: 35px;
+    position: relative;
+}
+
+.form-block .control-label {
+    font-weight: 600;
+    font-size: 16px;
+    padding-top: 8px;
+}
+
+.form-block .form-control {
+    height: 40px;
+}
+
+.form-block .help-block {
+    position: absolute;
+    left: 15px;
+    bottom: -30px;
+}
+
+.form-block .form-button {
+    font-size: 15px;
+    margin-right: 10px;
+    padding: 8px 10px;
+}
+
+

@@ -3,10 +3,10 @@
 {% from "form_macro.html" import render_field %}
 
 {% block page_content %}
-<div class="well">
+<div class="form-block">
 <form class="form-horizontal" action="" method="POST" name="register">
   <fieldset>
-    <legend>Registration page</legend>
+    <legend class="light-text">Registration page</legend>
 
     {{ form.hidden_tag() }}
     {{ render_field(form.nickname, label='Nickname', placeholder='NIckname') }}
@@ -16,8 +16,8 @@
 
     <div class="form-group">
       <div class="col-lg-8 col-lg-offset-2">
-        <button type="submit" class="btn btn-primary">Register</button>
-        <button type="reset" class="btn btn-default">Reset</button>
+        <button type="submit" class="btn blue-button form-button">Register</button>
+        <button type="reset" class="btn btn-default form-button">Reset</button>
       </div>
     </div>
   </fieldset>
