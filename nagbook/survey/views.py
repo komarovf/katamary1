@@ -67,13 +67,12 @@ def add(user_id):
 
 @survey.route('/answer/<hash>', methods=['GET', 'POST'])
 def add_answer(hash):
-    # survey_id, email_hash = hash.split('_')
-    # check hash in survey_hashes here
-    email_hash = 'a'
-    survey_id = 2
+    survey_id, email_hash = hash.split('_')
+    survey_id = int(survey_id)
+
     hashes = map(
-        lambda email: md5(email).hexdigest(),
-        Respondent.query.filter_by(survey_id == survey_id).all()
+        lambda r: md5(r.email_hash).hexdigest(),
+        Respondent.query.filter_by(survey_id=survey_id).all()
     )
     if email_hash not in hashes:
         abort(404)
@@ -83,11 +82,14 @@ def add_answer(hash):
     if request.method == 'POST':
         # Save Answers here
         answers = request.json
-        for q in survey.questions.all():
-            pass
-            # a = Answer()
-            # db.session.add(a)
-        # db.session.commit()
+        for i, q in enumerate(survey.questions.all()):
+            a = Answer(
+                email=email_hash,
+                question_id=q.id,
+                answer=answers[str(i)]
+            )
+            db.session.add(a)
+        db.session.commit()
         return jsonify({"status": "ok"})
 
     return render_template('survey/answer_form.html', survey_id=survey_id)
