@@ -66,7 +66,6 @@ def add(user_id):
             </body>
         </html>
         """.format(survey.name, url)
-        print email_text
 
         # Non blocking emails send
         mandrill.send_email = async_email_send(mandrill.send_email)
@@ -103,6 +102,10 @@ def add_answer(hash):
     else:
         respondent = Respondent.query.get(hashes[email_hash])
 
+    # prevent double submission
+    if respondent.sent_status:
+        abort(404)
+
     survey = Survey.query.get(survey_id)
 
     if request.method == 'POST':
@@ -129,7 +132,12 @@ def analize_answer(email, id):
     hash = md5(email).hexdigest()
     survey = Survey.query.get(id)
     questions = survey.questions.all()
-    answers = Answer.query.filter_by(email=hash).all()
+    answers = (
+        Answer.query
+        .filter_by(email=hash)
+        .filter(Answer.question_id.in_(map(lambda x: x.id, questions)))
+        .all()
+    )
     return render_template(
         'survey/results.html',
         questions=questions,

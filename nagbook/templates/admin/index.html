@@ -1,5 +1,11 @@
-{% extends "base.html" %}
-
-{% block page_content %}
-    <h1>Admin page</h1>
-{% endblock page_content %}
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+<div class="row-fluid">
+    <div>
+        {% if current_user.is_authenticated %}
+        <h1>Страница администратора</h1>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

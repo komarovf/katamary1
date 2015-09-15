@@ -104,7 +104,7 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
         for (var i=0; i < this.state.survey.questions.length; i++) {
             if (!this.state.answers[i] || this.state.answers[i].length == 0) {
                 errors.push(i+1);
-            } 
+            }
         };
         this.setState({
             errors: errors
@@ -139,7 +139,7 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
         if (this.state.errors.length > 0) {
             var error = "Нужно ответить на вопросы: " + this.state.errors;
         }
-        if (survey.start_time > today || survey.end_time < today) {
+        if (moment(survey.start_time) > today || moment(survey.end_time) < today) {
             return (
                 React.createElement("div", null, 
                     "Время опроса: ", survey.start_time, " - ", survey.end_time
@@ -168,7 +168,6 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
 
 
 module.exports = AnswerForm;
-
 },{"react":161,"react-checkbox-group":4,"react-radio":5}],2:[function(require,module,exports){
 var React = require("react");
 var AnswerForm = require("./answer_form.js");
@@ -631,7 +630,6 @@ if (node_ans) {
         node_ans
     );
 };
-
 },{"./answer_form.js":1,"react":161}],3:[function(require,module,exports){
 // shim for using process in browser
 

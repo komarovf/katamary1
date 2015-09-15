@@ -20,7 +20,7 @@ def roles_required(*roles):
                 return current_app.login_manager.unauthorized()
             elif current_user.role not in roles:
                 flash('Permission denied!')
-                return redirect(url_for('main.index'))
+                return False
             return f(*args, **kwargs)
         return wrapped
     return wrapper

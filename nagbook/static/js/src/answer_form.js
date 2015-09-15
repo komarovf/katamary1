@@ -103,7 +103,7 @@ var AnswerForm = React.createClass({
         for (var i=0; i < this.state.survey.questions.length; i++) {
             if (!this.state.answers[i] || this.state.answers[i].length == 0) {
                 errors.push(i+1);
-            } 
+            }
         };
         this.setState({
             errors: errors
@@ -138,7 +138,7 @@ var AnswerForm = React.createClass({
         if (this.state.errors.length > 0) {
             var error = "Нужно ответить на вопросы: " + this.state.errors;
         }
-        if (survey.start_time > today || survey.end_time < today) {
+        if (moment(survey.start_time) > today || moment(survey.end_time) < today) {
             return (
                 <div>
                     Время опроса: {survey.start_time} - {survey.end_time}

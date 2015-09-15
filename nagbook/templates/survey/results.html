@@ -17,6 +17,9 @@
             <p><b>{{ q.body }}</b> ({{ type }})</p>
             <ul>
             {% set ans = answers[loop.index0].answer %}
+                {% if q.type == "2" %}
+                    <li class="text-success"><b>{{ ans }}</b></li>
+                {% endif %}
             {% for item in q.q_object %}
                 {% if loop.index0|string in ans %}
                     <li class="text-success"><b>{{ item }}</b></li>
