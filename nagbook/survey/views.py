@@ -92,12 +92,16 @@ def add_answer(hash):
 
     survey_id = int(survey_id)
 
-    hashes = map(
-        lambda r: md5(r.email_hash).hexdigest(),
+    hashes = dict(map(
+        lambda r: (md5(r.email_hash).hexdigest(), r.id),
         Respondent.query.filter_by(survey_id=survey_id).all()
-    )
-    if email_hash not in hashes:
+    ))
+
+    # Change this after making all survays public (integration on public pages)
+    if email_hash not in hashes.keys():
         abort(404)
+    else:
+        respondent = Respondent.query.get(hashes[email_hash])
 
     survey = Survey.query.get(survey_id)
 
@@ -111,10 +115,21 @@ def add_answer(hash):
                 answer=answers[str(i)]
             )
             db.session.add(a)
+        respondent.sent_status = True
+        db.session.add(respondent)
         db.session.commit()
         return jsonify({"status": "ok"})
 
     return render_template('survey/answer_form.html', survey_id=survey_id)
+
+
+@survey.route('/analize/<email>/<int:id>', methods=['GET'])
+@login_required
+def analize_answer(email, id):
+    hash = md5(email).hexdigest()
+    survey = Survey.query.get(id).questions.all()
+    answers = Answer.query.filter_by(email=hash).all()
+    # return render_template()
 
 
 @survey.route('/get/<int:survey_id>', methods=['GET'])
