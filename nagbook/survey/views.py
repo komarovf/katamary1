@@ -65,11 +65,12 @@ def add(user_id):
 def answer_view(hash):
     # survey_id, email_hash = hash.split('_')
     # check hash in survey_hashes here
-    survey_id = 3
+    survey_id = 2
 
     if request.method == 'POST':
         # Save Answers here
-        pass
+        print request.json
+        return jsonify({"status": "ok"})
 
     return render_template('survey/answer_form.html', survey_id=survey_id)
 

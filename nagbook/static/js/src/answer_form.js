@@ -1,12 +1,14 @@
 var React = require("react");
 var CheckboxGroup = require('react-checkbox-group');
-var RadioGroup = require('react-radio')
+var RadioGroup = require('react-radio');
 
 
 var AnswerForm = React.createClass({
     getInitialState: function() {
         return {
           survey: {},
+          answers: {},
+          errors: []
         };
     },
 
@@ -49,7 +51,7 @@ var AnswerForm = React.createClass({
 
             if (q.type == 0) {
                 answers = (
-                    <RadioGroup name={"q"+index}>
+                    <RadioGroup name={"q"+index} ref={"q"+index} onChange={self.handleAnswerChange.bind(null, index, 0)}>
                         <div>
                             {answersData}
                         </div>
@@ -57,7 +59,7 @@ var AnswerForm = React.createClass({
                 );
             } else if (q.type == 1) {
                 answers = (
-                    <CheckboxGroup name={"q"+index}>
+                    <CheckboxGroup name={"q"+index} ref={"q"+index} onChange={self.handleAnswerChange.bind(null, index, 1)}>
                         <div>
                             {answersData}
                         </div>
@@ -65,7 +67,7 @@ var AnswerForm = React.createClass({
                 );
             } else {
                 answers = (
-                    <textarea></textarea>
+                    <textarea onChange={self.handleAnswerChange.bind(null, index, 2)} ref={"q"+index}></textarea>
                 );
             };
             return (
@@ -81,13 +83,61 @@ var AnswerForm = React.createClass({
         return result;
     },
 
+    handleAnswerChange: function(i, type) {
+        if (type == 2) {
+            this.state.answers[i] = this.refs["q"+i].getDOMNode().value;
+        } else if (type == 1) {
+            this.state.answers[i] = this.refs["q"+i].getCheckedValues();
+        } else if (type == 0) {
+            this.state.answers[i] = this.refs["q"+i].getValue();
+        };
+
+        this.setState({
+            answers: this.state.answers
+        });
+    },
+
     handleSaveAnswers: function(e) {
         e.preventDefault();
+        var errors = [];
+        for (var i=0; i < this.state.survey.questions.length; i++) {
+            if (!this.state.answers[i] || this.state.answers[i].length == 0) {
+                errors.push(i+1);
+            } 
+        };
+        this.setState({
+            errors: errors
+        });
+        if (errors.length == 0) {
+            $.ajax({
+                type: "POST",
+                url: window.location.pathname,
+                data: JSON.stringify(this.state.answers),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data) {
+                    try {
+                        if (data.status == "ok") {
+                            // Redirect to index page!
+                            window.location.href = '/';
+                        };
+                    } catch (e) {
+                        alert("Что-то пошло нетак! Попробуйте еще раз.");
+                    };
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
     },
 
     render: function() {
         var today = moment();
         var survey = this.state.survey;
+        if (this.state.errors.length > 0) {
+            var error = "Нужно ответить на вопросы: " + this.state.errors;
+        }
         if (survey.start_time > today || survey.end_time < today) {
             return (
                 <div>
@@ -100,6 +150,9 @@ var AnswerForm = React.createClass({
                     <h1>{survey.name}</h1>
                     <p>{survey.intro_text}</p>
                     <h3>Вопросы:</h3>
+                    <div className="text-warning">
+                        {error}
+                    </div>
                     <hr />
                     <ol>
                         {this.renderQuestions(survey.questions || [])}
