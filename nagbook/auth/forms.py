@@ -48,6 +48,11 @@ class RegisterForm(Form):
             self.nickname.errors.append('This nickname is already in use')
             return False
 
+        user = User.query.filter_by(email=self.email.data).first()
+        if user is not None:
+            self.email.errors.append('This Email is already in use')
+            return False
+
         return True
 
 

@@ -1,4 +1,6 @@
 var React = require("react");
+var CheckboxGroup = require('react-checkbox-group');
+var RadioGroup = require('react-radio')
 
 
 var AnswerForm = React.createClass({
@@ -11,7 +13,6 @@ var AnswerForm = React.createClass({
     componentDidMount: function() {
         $.get(this.props.source, function(result) {
             var survey = result.survey;
-            console.log(survey);
             if (this.isMounted()) {
                 this.setState({
                     survey: survey,
@@ -20,32 +21,68 @@ var AnswerForm = React.createClass({
         }.bind(this));
     },
 
-    renderAnswers: function(a, type) {
+    renderAnswers: function(a, type, key, i) {
+        var inputType;
+        if (type == 0) {
+            inputType = "radio"
+        } else if (type == 1) {
+            inputType = "checkbox"
+        }
         return (
-            <li>{a}</li>
+            <div key={key}>
+                <label>
+                    <input type={inputType} value={i} />{a}
+                </label>
+            </div>
         );
     },
 
     renderQuestions: function(questions) {
         var self = this;
+
         var result = questions.map(function(q, index) {
-            var answers = q.answers.map(function(a, i) {
+            var answers;
+            var answersData = q.answers.map(function(a, i) {
                 var key = "answer"+index+"_"+i;
-                return (
-                    <ul key={key}>
-                        {self.renderAnswers(a, q.type)}
-                    </ul>
-                );
+                return self.renderAnswers(a, q.type, key, i);
             });
 
+            if (q.type == 0) {
+                answers = (
+                    <RadioGroup name={"q"+index}>
+                        <div>
+                            {answersData}
+                        </div>
+                    </RadioGroup>
+                );
+            } else if (q.type == 1) {
+                answers = (
+                    <CheckboxGroup name={"q"+index}>
+                        <div>
+                            {answersData}
+                        </div>
+                    </CheckboxGroup>
+                );
+            } else {
+                answers = (
+                    <textarea></textarea>
+                );
+            };
             return (
-                <li key={"question"+index}>
-                    <p>{q.body}</p>
-                    {answers}
-                </li>
+                <div>
+                    <li key={"question"+index}>
+                        <p>{q.body}</p>
+                        {answers}
+                    </li>
+                </div>
             );
         });
+
         return result;
+    },
+
+    handleSaveAnswers: function(e) {
+        e.preventDefault();
     },
 
     render: function() {
@@ -63,9 +100,12 @@ var AnswerForm = React.createClass({
                     <h1>{survey.name}</h1>
                     <p>{survey.intro_text}</p>
                     <h3>Вопросы:</h3>
+                    <hr />
                     <ol>
                         {this.renderQuestions(survey.questions || [])}
                     </ol>
+                    <hr />
+                    <button onClick={this.handleSaveAnswers}>Отправить ответы</button>
                 </div>
             );
         }

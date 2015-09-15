@@ -49,10 +49,11 @@ var Survey = React.createClass({
             "intro_text": $('#intro_text').val(),
             "start_time": $('#start_time').val(),
             "end_time": $('#end_time').val(),
-            "questions": this.state.questions,
+            "questions": this.state.questions.filter(function(q) {return q.status == "saved";}),
             "emails": this.state.emails
         }];
         if (this.validateSurvey(survey[0])) {
+            console.log(survey[0]);
             $.ajax({
                 type: "POST",
                 url: window.location.pathname,
@@ -92,6 +93,7 @@ var Survey = React.createClass({
         q = this.state.questions[id];
         q.body = qBody;
         q.answers = answers;
+        q.status = "saved";
         this.setState({
             questions: this.state.questions
         });
@@ -113,6 +115,7 @@ var Survey = React.createClass({
             q = {};
             q.type = this.refs.q_type.getDOMNode().value;
             q.body = "";
+            q.status = "unsaved";
             if (q.type != 2) {
                 q.aCount = this.refs.a_count.getDOMNode().value;
             };
