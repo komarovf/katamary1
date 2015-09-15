@@ -3,10 +3,10 @@
 {% from "form_macro.html" import render_field, render_checkbox_field %}
 
 {% block page_content %}
-<div class="well">
+<div class="form-block">
 <form class="form-horizontal" action="" method="POST" name="login">
   <fieldset>
-    <legend>Login page</legend>
+    <legend class="light-text">Login page</legend>
 
     {{ form.hidden_tag() }}
     {{ render_field(form.email, label='Email', placeholder='Email') }}
@@ -15,8 +15,8 @@
 
     <div class="form-group">
       <div class="col-lg-8 col-lg-offset-2">
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-default">Register</a>
+        <button type="submit" class="btn blue-button form-button">Login</button>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-default form-button">Register</a>
       </div>
     </div>
   </fieldset>
