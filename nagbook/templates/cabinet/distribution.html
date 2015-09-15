@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+<div class= 'well'>
+    <h3>{{ current_user.id }}</h3>
+    <div class="jumbotron" style="margin:0px; background-color:#BDD8DA">
+    <h3>Emails in your survey mailing list:</h3>
+    <ul>
+    {% for respondent in respondents %}
+	    <li>{{respondent.email}} |
+            <span>Post answers({{respondent.sent_status}})</span>
+            {% if respondent.sent_status %}
+            |
+            <a href="{{ url_for('survey.analize_answer', id=survey_id, email=respondent.email) }}">
+                Analize rezult
+            </a>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    </div>
+</div>
+{% endblock page_content %}

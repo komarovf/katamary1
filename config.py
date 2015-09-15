@@ -4,18 +4,18 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or '811bc9ddec302f0c6c6eea6ccd83fdb4'
-    CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     DATABASE_QUERY_TIMEOUT = 0.5
-
+    MANDRILL_API_KEY = 'bZlbuCKuVBI4dsmFPkI7Ng'
     @staticmethod
     def init_app(app):
         pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///nagbook.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'nagbook.db')
 
 
 class TestingConfig(Config):

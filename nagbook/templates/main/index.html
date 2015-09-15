@@ -1,10 +1,23 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class= 'well'>
-    <h3>АЛЛОЭ</h3>
-    <br>
-    <a href="{{ url_for('auth.login') }}">Login</a>
-    <a href="{{ url_for('auth.register') }}">Register</a>
+{% block page_content %}
+<div class='clearfix main-block'>
+    <h2 class="text-center col-lg-8 col-lg-offset-2 light-text">
+        Nagbook! - app that makes creation of surveys a whole lot easier.
+    </h2>
+    {% if not g.user.is_authenticated %}
+    <div class="text-center">
+    <a class="btn btn-default register-button blue-button" href="{{ url_for('auth.login') }}">
+        Login
+    </a>
+    <a class="btn btn-default register-button blue-button" href="{{ url_for('auth.register') }}">
+        Register
+    </a>
+    </div>
+    {% else %}
+    <a class="btn btn-default center-block register-button blue-button" href="{{ url_for('survey.show_add_form', user_id=g.user.id) }}">
+        Create Survey!
+    </a>
+    {% endif %}
 </div>
-{% endblock content %}
+{% endblock page_content %}

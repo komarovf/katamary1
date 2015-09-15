@@ -12,11 +12,13 @@ manager.add_command("runserver", Server(host="0.0.0.0", port=8080))
 
 print
 
+
 def make_shell_context():
     return dict(treschat=nagbook, db=db)
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
+
 
 @manager.command
 def test(coverage=False):

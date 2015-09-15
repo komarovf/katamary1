@@ -1,0 +1,26 @@
+{
+  "name": "nagbook",
+  "version": "1.0.0",
+  "description": "uwc7 first stage",
+  "main": "",
+  "scripts": {
+    "build": "browserify -t reactify nagbook/static/js/src/survey.js -o nagbook/static/js/bundle/bundled.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/komarovf/katamary1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/komarovf/katamary1/issues"
+  },
+  "homepage": "https://github.com/komarovf/katamary1",
+  "dependencies": {
+    "browserify": "^11.1.0",
+    "react": "^0.13.3",
+    "react-checkbox-group": "^0.2.0",
+    "react-radio": "^1.0.6",
+    "reactify": "^1.1.1"
+  }
+}

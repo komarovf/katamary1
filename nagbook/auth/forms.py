@@ -1,4 +1,4 @@
-from flask.ext.wtf import Form
+from flask_wtf import Form
 from wtforms import StringField, BooleanField, PasswordField, TextAreaField
 from wtforms.validators import Required, Length, Email
 
@@ -33,7 +33,7 @@ class RegisterForm(Form):
         if not Form.validate(self):
             return False
 
-        if self.nickname.data != User.make_valid_login(self.nickname.data):
+        if self.nickname.data != User.make_valid_nickname(self.nickname.data):
             self.nickname.errors.append(
                 'Please use letters, numbers, dots and underscores only'
             )
@@ -46,6 +46,11 @@ class RegisterForm(Form):
         user = User.query.filter_by(nickname=self.nickname.data).first()
         if user is not None:
             self.nickname.errors.append('This nickname is already in use')
+            return False
+
+        user = User.query.filter_by(email=self.email.data).first()
+        if user is not None:
+            self.email.errors.append('This Email is already in use')
             return False
 
         return True
@@ -63,12 +68,10 @@ class LoginForm(Form):
         user = User.query.filter_by(email=self.email.data).first()
         if user is None:
             self.email.errors.append('Invalid email or password')
-            self.password.errors.append('Invalid email or password')
             return False
 
         if not user.is_correct_password(self.password.data):
             self.email.errors.append('Invalid email or password')
-            self.password.errors.append('Invalid email or password')
             return False
 
         return True

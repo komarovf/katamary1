@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+    <div id="answer_survey" data-url="{{ url_for('survey.get_survey', survey_id=survey_id) }}"></div>
+{% endblock page_content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bundle/bundled.js') }}"></script>
+{% endblock scripts %}

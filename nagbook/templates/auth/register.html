@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% from "form_macro.html" import render_field %}
+
+{% block page_content %}
+<div class="form-block">
+<form class="form-horizontal" action="" method="POST" name="register">
+  <fieldset>
+    <legend class="light-text">Registration page</legend>
+
+    {{ form.hidden_tag() }}
+    {{ render_field(form.nickname, label='Nickname', placeholder='NIckname') }}
+    {{ render_field(form.email, label='Email', placeholder='Email') }}
+    {{ render_field(form.password, label='Password', placeholder='Password') }}
+    {{ render_field(form.confirm_pass, label='Confirm password', placeholder='Confirm password') }}
+
+    <div class="form-group">
+      <div class="col-lg-8 col-lg-offset-2">
+        <button type="submit" class="btn blue-button form-button">Register</button>
+        <button type="reset" class="btn btn-default form-button">Reset</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+</div>
+{% endblock page_content %}
