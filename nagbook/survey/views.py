@@ -1,9 +1,12 @@
+from hashlib import md5
+from datetime import datetime
+
 from flask import render_template, abort, g, request, jsonify
 from flask.ext.login import login_required, current_user
-from datetime import datetime
+
 from . import survey
 from .. import db, mandrill
-from ..models import Survey, Question, Respondent
+from ..models import Survey, Question, Respondent, Answer
 
 
 @survey.before_request
@@ -50,6 +53,7 @@ def add(user_id):
             email_hash=respondent_json,
         )
         db.session.add(respondent)
+        hash = str(survey.id) + "_" + md5(respondent_json).hexdigest()
 
         # mandrill.send_email(
         #    from_email='komarovf88@gmail.com',
@@ -62,14 +66,28 @@ def add(user_id):
 
 
 @survey.route('/answer/<hash>', methods=['GET', 'POST'])
-def answer_view(hash):
+def add_answer(hash):
     # survey_id, email_hash = hash.split('_')
     # check hash in survey_hashes here
+    email_hash = 'a'
     survey_id = 2
+    hashes = map(
+        lambda email: md5(email).hexdigest(),
+        Respondent.query.filter_by(survey_id == survey_id).all()
+    )
+    if email_hash not in hashes:
+        abort(404)
+
+    survey = Survey.query.get(survey_id)
 
     if request.method == 'POST':
         # Save Answers here
-        print request.json
+        answers = request.json
+        for q in survey.questions.all():
+            pass
+            # a = Answer()
+            # db.session.add(a)
+        # db.session.commit()
         return jsonify({"status": "ok"})
 
     return render_template('survey/answer_form.html', survey_id=survey_id)
