@@ -174,66 +174,89 @@ var Survey = React.createClass({
             return (
                 <li key={"email"+index}>
                     <span>{email}</span>
-                    <button onClick={self.handleEmailDel.bind(null, email)}>Удалить</button>
+                    <button onClick={self.handleEmailDel.bind(null, email)} className="btn btn-default left-offset">Удалить</button>
                 </li>
             );
         });
 
         return (
             <form ref="survey_form">
-                <hr />
-                <label htmlFor="name">Название опроса </label>
-                <input type="text" id="name" ref="name" />
-                <span>{this.state.errors.name || ""}</span>
-                <br />
-                <label htmlFor="intro_text">Описание опроса </label>
-                <textarea id="intro_text" ref="intro_text"></textarea>
-                <span>{this.state.errors.intro_text || ""}</span>
-                <br />
-                <label htmlFor="start_time">Дата начала опроса </label>
-                <input
-                    type="date"
-                    id="start_time"
-                    ref="start_time"
-                    defaultValue={moment().format('YYYY-MM-DD')}
-                />
-                <span>{this.state.errors.start_time || ""}</span>
-                <br />
-                <label htmlFor="end_time">Дата завершения опроса </label>
-                <input
-                    type="date"
-                    id="end_time"
-                    ref="end_time"
-                    defaultValue={moment().format('YYYY-MM-DD')}
-                />
-                <span>{this.state.errors.end_time || ""}</span>
-                <br />
-                <span>Можно добавить еще {this.props.maxCount - this.state.questions.length} вопросов.</span>
+                <div className="form-group clearfix">
+                    <label htmlFor="name" className="control-label col-lg-3">Название опроса </label>
+                    <div className="col-lg-8">
+                        <input type="text" id="name" ref="name" className="form-control" />
+                    </div>
+                    <span className="help-block">{this.state.errors.name || ""}</span>
+                </div>
+                <div className="form-group clearfix">
+                    <label htmlFor="intro_text" className="control-label col-lg-3">Описание опроса </label>
+                    <div className="col-lg-8">
+                        <textarea id="intro_text" ref="intro_text" className="form-control survey-description"></textarea>
+                    </div>
+                    <span className="help-block">{this.state.errors.intro_text || ""}</span>
+                </div>
+                <div className="form-group clearfix">
+                    <label htmlFor="start_time" className="control-label col-lg-3">Дата начала опроса </label>
+                    <div className="col-lg-3">
+                        <input
+                            type="date"
+                            id="start_time"
+                            ref="start_time"
+                            defaultValue={moment().format('YYYY-MM-DD')}
+                            className="form-control"
+                        />
+                    </div>
+                    <span className="help-block">{this.state.errors.start_time || ""}</span>
+                </div>
+                <div className="form-group clearfix">
+                    <label htmlFor="end_time" className="control-label col-lg-3">Дата завершения опроса </label>
+                    <div className="col-lg-3">
+                        <input
+                            type="date"
+                            id="end_time"
+                            ref="end_time"
+                            defaultValue={moment().format('YYYY-MM-DD')}
+                            className="form-control"
+                        />
+                    </div>
+                    <span className="help-block">{this.state.errors.end_time || ""}</span>
+                </div>
+                <p className="questions-count light-text">
+                    Можно добавить еще {this.props.maxCount - this.state.questions.length} вопросов.
+                </p>
                 <hr/>
-                <div>
-                    <label htmlFor="q_type">Тип вопроса</label>
-                    <select
+                <div className="form-group clearfix">
+                    <label htmlFor="q_type" className="control-label col-lg-3">Тип вопроса</label>
+                    <div className="col-lg-3">
+                        <select
                         defaultValue={this.props.types[0]}
                         onChange={this.handleTypeSelect}
                         ref="q_type"
                         id="q_type"
-                    >
-                        {selectTypeOptions}
-                    </select>
+                        >
+                            {selectTypeOptions}
+                        </select>
                     </div>
-                <div className={this.state.selectCountClass}>
-                    <label htmlFor="a_count">Количество ответов</label>
-                    <select
+                </div>
+                <div className={this.state.selectCountClass} className="form-group clearfix">
+                    <label htmlFor="a_count" className="control-label col-lg-3">Количество ответов</label>
+                    <div className="col-lg-3">
+                        <select
                         defaultValue={this.props.aCount[1]}
                         ref="a_count"
                         id="a_count"
-                    >
-                        {selectCount}
-                    </select>
+                        >
+                            {selectCount}
+                        </select>
+                    </div>
                 </div>
-                <button onClick={this.handleAddQuestion}>
-                    Добавить вопрос
-                </button>
+                <div className="form-group clearfix">
+                    <div className="col-lg-8 col-lg-offset-3">
+                        <button onClick={this.handleAddQuestion} className="btn btn-default">
+                            Добавить вопрос
+                        </button>
+                    </div>
+                </div>
                 <span>{this.state.errors.questions || ""}</span>
                 <hr />
                 <QuestionList
@@ -244,15 +267,16 @@ var Survey = React.createClass({
                 <ol>
                     {emails}
                 </ol>
-                <input type="text" id="email_input" ref="email_input" />
-                <span>{this.state.errors.email_input || ""}</span>
-                <br />
-                <button onClick={this.handleEmailAdd}>
-                    Добавить Email для рассылки
-                </button>
-                <span>{this.state.errors.emails || ""}</span>
+                <div className="email-form-group clearfix">
+                    <input type="text" id="email_input" ref="email_input" className="form-control" />
+                    <button onClick={this.handleEmailAdd} className="btn btn-default">
+                        Добавить Email для рассылки
+                    </button>
+                    <p>{this.state.errors.email_input || ""}</p>
+                    <p>{this.state.errors.emails || ""}</p>
+                </div>
                 <hr />
-                <button onClick={this.createSurvey}>Сохранить опрос</button>
+                <button onClick={this.createSurvey} className="btn btn-default centered-button">Сохранить опрос</button>
             </form>
         );
     }
@@ -318,7 +342,7 @@ var Question = React.createClass({
         var value = this.props.data.body || "";
         var nodes = [
             <label htmlFor="question">Вопрос: ({qType})</label>,
-            <input type="text" id="question" ref="ans" defaultValue={value} />
+            <input type="text" id="question" ref="ans" defaultValue={value} className="left-offset answers-input"/>
         ];
         if (this.state.errors["ans"]) {
             nodes.push(
@@ -399,7 +423,7 @@ var Question = React.createClass({
                 );
             };
             answers = (
-                <div>
+                <div className="answers">
                     <p>Варианты ответов: </p>
                     <ol>{answer_list}</ol>
                 </div>
@@ -410,17 +434,17 @@ var Question = React.createClass({
 
         if (this.state.edit) {
             btn = (
-                <button onClick={this.handleSaveClick}>
+                <button onClick={this.handleSaveClick} className="btn btn-default">
                     Сохранить вопрос
                 </button>
             );
         } else {
             btn = (
                 <div>
-                    <button onClick={this.handleDelClick}>
+                    <button onClick={this.handleDelClick} className="btn btn-default">
                         Удалить вопрос
                     </button>
-                    <button onClick={this.handleEditClick}>
+                    <button onClick={this.handleEditClick} className="btn btn-default">
                         Редактировать вопрос
                     </button>
                 </div>

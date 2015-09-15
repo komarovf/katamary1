@@ -1,6 +1,7 @@
 .main-block,
 .form-block,
-.personal-block {
+.personal-block,
+.survey-block {
     border: 1px solid #000;
     border-radius: 4px;
 }
@@ -13,6 +14,10 @@
     -ms-transition: all 0.1s;
     -o-transition: all 0.1s;
     transition: all 0.1s;
+}
+
+.left-offset {
+    margin-left: 10px;
 }
 
 .blue-button {
@@ -89,25 +94,32 @@
     margin: 20px auto 20px auto;
 }
 
-.form-block .form-group {
+.form-block .form-group,
+.survey-block .form-group {
     margin-bottom: 35px;
     position: relative;
 }
 
-.form-block .control-label {
+.form-group .control-label {
     font-weight: 600;
     font-size: 16px;
     padding-top: 8px;
+    text-align: right;
 }
 
-.form-block .form-control {
+.form-group .form-control {
     height: 40px;
 }
 
-.form-block .help-block {
+.form-group .help-block {
     position: absolute;
-    left: 15px;
-    bottom: -30px;
+    left: 28px;
+    bottom: -35px;
+}
+
+.form-group .survey-description {
+    resize: none;
+    height: 100px;
 }
 
 .form-block .form-button {
@@ -116,4 +128,66 @@
     padding: 8px 10px;
 }
 
+.form-group select {
+    margin-top: 11px;
+}
+
+.survey-block h2 {
+    padding: 10px 0 0 20px;
+    margin: 0 auto 60px auto;
+    border-bottom: 1px solid #e5e5e5;
+    width: 99%;
+}
+
+.survey-block hr {
+    width: 99%;
+}
+
+.survey-block {
+    padding-bottom: 20px;
+}
+
+.survey-block .questions-count {
+    text-align: center;
+    font-size: 15px;
+}
+
+.email-form-group .form-control {
+    width: 35%;
+    margin: 0 20px 20px 10px;
+    height: 40px;
+    float: left;
+}
+
+.email-form-group button {
+    float: left;
+    height: 40px;
+    width: 300px;
+}
+
+.email-form-group p {
+    clear: left;
+    padding-left: 10px;
+    font-size: 16px;
+    font-weight: 200;
+}
+
+.survey-block .centered-button {
+    width: 300px;
+    display: block;
+    margin: 0 auto;
+    height: 35px;
+}
+
+.answers input,
+.answers-input {
+    width: 300px;
+    border-radius: 4px;
+    -webkit-appearance: none;
+    border: 1px solid #eeeeee;
+}
+
+.answers li {
+    margin-bottom: 10px;
+}
 
