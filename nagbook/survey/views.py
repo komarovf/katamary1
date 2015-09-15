@@ -1,9 +1,13 @@
-from flask import render_template, abort, g, request, jsonify
-from flask.ext.login import login_required, current_user
+from hashlib import md5
 from datetime import datetime
+
+from flask import render_template, abort, g, request, jsonify, url_for
+from flask.ext.login import login_required, current_user
+
 from . import survey
 from .. import db, mandrill
-from ..models import Survey, Question, Respondent
+from ..models import Survey, Question, Respondent, Answer
+from ..decorators import async_email_send
 
 
 @survey.before_request
@@ -51,27 +55,95 @@ def add(user_id):
         )
         db.session.add(respondent)
 
-        # mandrill.send_email(
-        #    from_email='komarovf88@gmail.com',
-        #    to=[{'email': respondent_json}],
-        #    text='1337'
-        # )
+        hash = str(survey.id) + "_" + md5(respondent_json).hexdigest()
+        url = url_for('survey.add_answer', hash=hash, _external=True)
+        email_text = """
+        <html>
+            <head></head>
+            <body>
+                <h1>You invited for survey: {0}</h1>
+                <a href="{1}">Go to survey page!</a>
+            </body>
+        </html>
+        """.format(survey.name, url)
+
+        # Non blocking emails send
+        mandrill.send_email = async_email_send(mandrill.send_email)
+        mandrill.send_email(
+            html=email_text,
+            text=url,
+            subject="Survey invitation!",
+            from_email='noreply@survey.com',
+            to=[{'email': respondent_json}],
+            async=True
+        )
 
     db.session.commit()
     return jsonify({"status": "ok"})
 
 
 @survey.route('/answer/<hash>', methods=['GET', 'POST'])
-def answer_view(hash):
-    # survey_id, email_hash = hash.split('_')
-    # check hash in survey_hashes here
-    survey_id = 3
+def add_answer(hash):
+    if "_" in hash:
+        survey_id, email_hash = hash.split('_')
+    else:
+        abort(404)
+
+    survey_id = int(survey_id)
+
+    hashes = dict(map(
+        lambda r: (md5(r.email_hash).hexdigest(), r.id),
+        Respondent.query.filter_by(survey_id=survey_id).all()
+    ))
+
+    # Change this after making all survays public (integration on public pages)
+    if email_hash not in hashes.keys():
+        abort(404)
+    else:
+        respondent = Respondent.query.get(hashes[email_hash])
+
+    # prevent double submission
+    if respondent.sent_status:
+        abort(404)
+
+    survey = Survey.query.get(survey_id)
 
     if request.method == 'POST':
         # Save Answers here
-        pass
+        answers = request.json
+        for i, q in enumerate(survey.questions.all()):
+            a = Answer(
+                email=email_hash,
+                question_id=q.id,
+                answer=answers[str(i)]
+            )
+            db.session.add(a)
+        respondent.sent_status = True
+        db.session.add(respondent)
+        db.session.commit()
+        return jsonify({"status": "ok"})
 
     return render_template('survey/answer_form.html', survey_id=survey_id)
+
+
+@survey.route('/analize/<email>/<int:id>', methods=['GET'])
+@login_required
+def analize_answer(email, id):
+    hash = md5(email).hexdigest()
+    survey = Survey.query.get(id)
+    questions = survey.questions.all()
+    answers = (
+        Answer.query
+        .filter_by(email=hash)
+        .filter(Answer.question_id.in_(map(lambda x: x.id, questions)))
+        .all()
+    )
+    return render_template(
+        'survey/results.html',
+        questions=questions,
+        answers=answers,
+        survey=survey
+    )
 
 
 @survey.route('/get/<int:survey_id>', methods=['GET'])

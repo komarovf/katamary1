@@ -1,13 +1,15 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var React = require("react");
 var CheckboxGroup = require('react-checkbox-group');
-var RadioGroup = require('react-radio')
+var RadioGroup = require('react-radio');
 
 
 var AnswerForm = React.createClass({displayName: "AnswerForm",
     getInitialState: function() {
         return {
           survey: {},
+          answers: {},
+          errors: []
         };
     },
 
@@ -50,7 +52,7 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
 
             if (q.type == 0) {
                 answers = (
-                    React.createElement(RadioGroup, {name: "q"+index}, 
+                    React.createElement(RadioGroup, {name: "q"+index, ref: "q"+index, onChange: self.handleAnswerChange.bind(null, index, 0)}, 
                         React.createElement("div", null, 
                             answersData
                         )
@@ -58,7 +60,7 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
                 );
             } else if (q.type == 1) {
                 answers = (
-                    React.createElement(CheckboxGroup, {name: "q"+index}, 
+                    React.createElement(CheckboxGroup, {name: "q"+index, ref: "q"+index, onChange: self.handleAnswerChange.bind(null, index, 1)}, 
                         React.createElement("div", null, 
                             answersData
                         )
@@ -66,7 +68,7 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
                 );
             } else {
                 answers = (
-                    React.createElement("textarea", null)
+                    React.createElement("textarea", {onChange: self.handleAnswerChange.bind(null, index, 2), ref: "q"+index})
                 );
             };
             return (
@@ -74,8 +76,7 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
                     React.createElement("li", {key: "question"+index}, 
                         React.createElement("p", null, q.body), 
                         answers
-                    ), 
-                    React.createElement("hr", null)
+                    )
                 )
             );
         });
@@ -83,14 +84,62 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
         return result;
     },
 
+    handleAnswerChange: function(i, type) {
+        if (type == 2) {
+            this.state.answers[i] = this.refs["q"+i].getDOMNode().value;
+        } else if (type == 1) {
+            this.state.answers[i] = this.refs["q"+i].getCheckedValues();
+        } else if (type == 0) {
+            this.state.answers[i] = this.refs["q"+i].getValue();
+        };
+
+        this.setState({
+            answers: this.state.answers
+        });
+    },
+
     handleSaveAnswers: function(e) {
         e.preventDefault();
+        var errors = [];
+        for (var i=0; i < this.state.survey.questions.length; i++) {
+            if (!this.state.answers[i] || this.state.answers[i].length == 0) {
+                errors.push(i+1);
+            }
+        };
+        this.setState({
+            errors: errors
+        });
+        if (errors.length == 0) {
+            $.ajax({
+                type: "POST",
+                url: window.location.pathname,
+                data: JSON.stringify(this.state.answers),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data) {
+                    try {
+                        if (data.status == "ok") {
+                            // Redirect to index page!
+                            window.location.href = '/';
+                        };
+                    } catch (e) {
+                        alert("Что-то пошло нетак! Попробуйте еще раз.");
+                    };
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        }
     },
 
     render: function() {
         var today = moment();
         var survey = this.state.survey;
-        if (survey.start_time > today || survey.end_time < today) {
+        if (this.state.errors.length > 0) {
+            var error = "Нужно ответить на вопросы: " + this.state.errors;
+        }
+        if (moment(survey.start_time) > today || moment(survey.end_time) < today) {
             return (
                 React.createElement("div", null, 
                     "Время опроса: ", survey.start_time, " - ", survey.end_time
@@ -102,10 +151,14 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
                     React.createElement("h1", null, survey.name), 
                     React.createElement("p", null, survey.intro_text), 
                     React.createElement("h3", null, "Вопросы:"), 
+                    React.createElement("div", {className: "text-warning"}, 
+                        error
+                    ), 
                     React.createElement("hr", null), 
                     React.createElement("ol", null, 
                         this.renderQuestions(survey.questions || [])
                     ), 
+                    React.createElement("hr", null), 
                     React.createElement("button", {onClick: this.handleSaveAnswers}, "Отправить ответы")
                 )
             );
@@ -115,7 +168,6 @@ var AnswerForm = React.createClass({displayName: "AnswerForm",
 
 
 module.exports = AnswerForm;
-
 },{"react":161,"react-checkbox-group":4,"react-radio":5}],2:[function(require,module,exports){
 var React = require("react");
 var AnswerForm = require("./answer_form.js");
@@ -578,7 +630,6 @@ if (node_ans) {
         node_ans
     );
 };
-
 },{"./answer_form.js":1,"react":161}],3:[function(require,module,exports){
 // shim for using process in browser
 

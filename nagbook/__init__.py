@@ -4,6 +4,7 @@ from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.mandrill import Mandrill
+from flask.ext.admin import Admin
 
 from config import config
 
@@ -29,9 +30,6 @@ def create_app(config_name):
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    from .admin import admin as admin_blueprint
-    app.register_blueprint(admin_blueprint, url_prefix='/admin')
-
     from .api import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api')
 
@@ -43,5 +41,10 @@ def create_app(config_name):
 
     from .cabinet import cabinet as cabinet_blueprint
     app.register_blueprint(cabinet_blueprint, url_prefix='/cabinet')
+
+    from .admin.views import *
+    adm = Admin(app, template_mode='bootstrap3', base_template='admin/my_master.html')
+    adm.add_view(UserView(db.session))
+    # adm.add_view(SurvView(db.session))
 
     return app

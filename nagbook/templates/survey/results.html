@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+    <h1>{{ survey.name }}</h1>
+    <hr>
+    <h3>Ответы на вопросы:</h3>
+    <ol>
+    {% for q in questions %}
+        <li>
+            {% if q.type == "0" %}
+                {% set type = "One-answer" %}
+            {% elif q.type == "1" %}
+                {% set type = "Multiple-answer" %}
+            {% else %}
+                {% set type = "Text-answer" %}
+            {% endif %}
+            <p><b>{{ q.body }}</b> ({{ type }})</p>
+            <ul>
+            {% set ans = answers[loop.index0].answer %}
+                {% if q.type == "2" %}
+                    <li class="text-success"><b>{{ ans }}</b></li>
+                {% endif %}
+            {% for item in q.q_object %}
+                {% if loop.index0|string in ans %}
+                    <li class="text-success"><b>{{ item }}</b></li>
+                {% else %}
+                    <li>{{ item }}</li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+    </ol>
+{% endblock page_content %}
+
