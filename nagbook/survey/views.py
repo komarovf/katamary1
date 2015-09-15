@@ -127,9 +127,15 @@ def add_answer(hash):
 @login_required
 def analize_answer(email, id):
     hash = md5(email).hexdigest()
-    survey = Survey.query.get(id).questions.all()
+    survey = Survey.query.get(id)
+    questions = survey.questions.all()
     answers = Answer.query.filter_by(email=hash).all()
-    # return render_template()
+    return render_template(
+        'survey/results.html',
+        questions=questions,
+        answers=answers,
+        survey=survey
+    )
 
 
 @survey.route('/get/<int:survey_id>', methods=['GET'])
